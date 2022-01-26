@@ -2,7 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -32,7 +32,10 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoose.connect('mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+mongoose
+    .connect(
+        'mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+    )
     .then(result => {
         app.listen(3000);
     })
