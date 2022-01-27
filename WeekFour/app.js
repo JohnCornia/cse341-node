@@ -1,5 +1,16 @@
 const path = require('path');
 
+const cors = require('cors'); // Place this with other requires (like 'path' and 'express')
+
+const corsOptions = {
+    origin: "https://<your_app_name>.herokuapp.com/",
+    optionsSuccessStatus: 200
+};
+
+const MONGODB_URL = process.env.MONGODB_URL || "mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority";
+
+const PORT = process.env.PORT || 5000
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -32,9 +43,19 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
+app.use(cors(corsOptions));
+
+const options = {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    family: 4
+};
+
 mongoose
     .connect(
-        'mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority'
+        MONGODB_URL, options
     )
     .then(result => {
         User.findOne().then(user => {
@@ -49,7 +70,7 @@ mongoose
                 user.save();
             }
         });
-        app.listen(3000);
+        app.listen(PORT);
     })
     .catch(err => {
         console.log(err);
