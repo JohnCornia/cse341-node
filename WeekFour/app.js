@@ -1,5 +1,7 @@
 const PORT = process.env.PORT || 5000;
 
+const cors = require('cors') // Place this with other requires (like 'path' and 'express')
+
 const path = require('path');
 
 const express = require('express');
@@ -34,10 +36,25 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoose.connect('mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+const MONGODB_URL = process.env.MONGODB_URL || "mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority";
+const options = {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    family: 4
+};
+
+mongoose.connect(MONGODB_URL, options)
     .then(result => {
         app.listen(PORT);
     })
     .catch(err => {
         console.log(err);
     });
+
+const corsOptions = {
+    origin: "https://johns-online-store.herokuapp.com/",
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
