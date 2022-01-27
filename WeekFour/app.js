@@ -1,12 +1,8 @@
-const PORT = process.env.PORT || 5000;
-
-const cors = require('cors') // Place this with other requires (like 'path' and 'express')
-
 const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -23,12 +19,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    User.findById('5baa2528563f16379fc8a610')
-        .then(user => {
-            req.user = new User(user.name, user.email, user.cart, user._id);
-            next();
-        })
-        .catch(err => console.log(err));
+  User.findById('5bab316ce0a7c75f783cb8a8')
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.log(err));
 });
 
 app.use('/admin', adminRoutes);
@@ -36,25 +32,25 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-const MONGODB_URL = process.env.MONGODB_URL || "mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority";
-const options = {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    family: 4
-};
-
-mongoose.connect(MONGODB_URL, options)
-    .then(result => {
-        app.listen(PORT);
-    })
-    .catch(err => {
-        console.log(err);
+mongoose
+  .connect(
+    'mongodb+srv://maximilian:9u4biljMQc4jjqbe@cluster0-ntrwp.mongodb.net/shop?retryWrites=true'
+  )
+  .then(result => {
+    User.findOne().then(user => {
+      if (!user) {
+        const user = new User({
+          name: 'Max',
+          email: 'max@test.com',
+          cart: {
+            items: []
+          }
+        });
+        user.save();
+      }
     });
-
-const corsOptions = {
-    origin: "https://johns-online-store.herokuapp.com/",
-    optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+    app.listen(3000);
+  })
+  .catch(err => {
+    console.log(err);
+  });
