@@ -1,3 +1,5 @@
+const PORT = process.env.PORT || 5000;
+
 const path = require('path');
 
 const express = require('express');
@@ -34,7 +36,7 @@ app.use(errorController.get404);
 
 mongoose.connect('mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
     .then(result => {
-        app.listen(3000);
+        app.listen(PORT);
     })
     .catch(err => {
         console.log(err);
