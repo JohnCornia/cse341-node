@@ -19,9 +19,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    User.findById('5baa2528563f16379fc8a610')
+    User.findById('61f1f2d24dc6a73e99d26d16')
         .then(user => {
-            req.user = new User(user.name, user.email, user.cart, user._id);
+            req.user = user;
             next();
         })
         .catch(err => console.log(err));
@@ -34,9 +34,21 @@ app.use(errorController.get404);
 
 mongoose
     .connect(
-        'mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+        'mongodb+srv://Gmvwt8NmajR6HXR:wTmZTEXhBU6uc8f@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority'
     )
     .then(result => {
+        User.findOne().then(user => {
+            if (!user) {
+                const user = new User({
+                    name: "John",
+                    email: 'cor13025@byui.edu',
+                    cart: {
+                        items: []
+                    }
+                });
+                user.save();
+            }
+        });
         app.listen(3000);
     })
     .catch(err => {
