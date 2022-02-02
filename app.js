@@ -16,11 +16,20 @@ dotenv.config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const app = express();
+
+const MONGODB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority`;
+
+const store = new MongoDBStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+});
 
 app.use(cors(corsOptions));
 
@@ -37,9 +46,20 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+    session({
+        secret: 'my secret',
+        resave: false,
+        saveUnitialized: false,
+        store: store
+    })
+);
 
 app.use((req, res, next) => {
-    User.findById('5bab316ce0a7c75f783cb8a8')
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
         .then(user => {
             req.user = user;
             next();
@@ -53,7 +73,7 @@ app.use(authRoutes);
 
 app.use(errorController.get404);
 
-const MONGODB_URL = process.env.MONGODB_URL || `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority`;
+const MONGODB_URL = process.env.MONGODB_URL || MONGODB_URI;
 
 mongoose
     .connect(
