@@ -92,7 +92,7 @@ exports.postSignup = (req, res, next) => {
                     res.redirect('/login');
                     return transporter.sendMail({
                         to: email,
-                        from: 'shop@node-complete.com',
+                        from: 'cor13025@byui.edu',
                         subject: 'Signup succeded!',
                         html: '<h1>You signed up!</h1>'
                     });
