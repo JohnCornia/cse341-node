@@ -20,7 +20,6 @@ dotenv.config();
 const MONGODB_URI =
     `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.fgsrg.mongodb.net/shop?retryWrites=true&w=majority`;
 /*****/
-
 const app = express();
 
 /**Here is Heroku integration stuff**/
@@ -92,7 +91,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-    .connect(MONGODB_URL, options)
+    .connect(MONGODB_URI)
     .then(result => {
         app.listen(PORT);
     })
